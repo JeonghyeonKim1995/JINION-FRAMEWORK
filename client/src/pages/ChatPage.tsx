@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import { sendMessage, type Message } from '../api/chat'
+import { sendMessage, type Message, type Attachment } from '../api/chat'
+import { type UploadedFile } from '../api/upload'
 import MessageList from '../components/MessageList'
 import ChatInput from '../components/ChatInput'
 
@@ -9,13 +10,18 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [busy, setBusy] = useState(false)
 
-  const handleSend = useCallback(async (text: string) => {
-    const userMsg: Message = { role: 'user', content: text }
+  const handleSend = useCallback(async (text: string, uploads: UploadedFile[]) => {
+    const attachments: Attachment[] = uploads.map(u => ({ url: u.url, name: u.name, type: u.type }))
+    const userMsg: Message = {
+      role: 'user',
+      content: text,
+      attachments: attachments.length ? attachments : undefined,
+    }
     setMessages(prev => [...prev, userMsg])
     setBusy(true)
 
     try {
-      const answer = await sendMessage(SESSION_ID, text)
+      const answer = await sendMessage(SESSION_ID, text, attachments.length ? attachments : undefined)
       setMessages(prev => [...prev, { role: 'assistant', content: answer }])
     } catch (e) {
       setMessages(prev => [...prev, {

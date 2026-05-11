@@ -20,11 +20,61 @@ export default function MessageBubble({ msg }: Props) {
         color: '#e8e8f0',
         fontSize: 14,
         lineHeight: 1.6,
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word',
         border: isUser ? 'none' : '1px solid rgba(255,255,255,0.1)',
       }}>
-        {msg.content}
+        {/* 첨부 파일 */}
+        {msg.attachments?.length ? (
+          <div style={{ marginBottom: msg.content ? 8 : 0 }}>
+            {msg.attachments.map((a, i) =>
+              a.type.startsWith('image/') ? (
+                <img
+                  key={i}
+                  src={a.url}
+                  alt={a.name}
+                  style={{
+                    display: 'block',
+                    maxWidth: '100%',
+                    maxHeight: 240,
+                    borderRadius: 8,
+                    marginBottom: 4,
+                    objectFit: 'contain',
+                  }}
+                />
+              ) : (
+                <a
+                  key={i}
+                  href={a.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '4px 8px',
+                    borderRadius: 6,
+                    background: 'rgba(0,0,0,0.2)',
+                    color: '#c4c0ff',
+                    textDecoration: 'none',
+                    fontSize: 13,
+                    marginBottom: 4,
+                  }}
+                >
+                  <span>📄</span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {a.name}
+                  </span>
+                </a>
+              )
+            )}
+          </div>
+        ) : null}
+
+        {/* 텍스트 */}
+        {msg.content && (
+          <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+            {msg.content}
+          </span>
+        )}
       </div>
     </div>
   )

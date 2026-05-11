@@ -7,7 +7,7 @@ load_dotenv(Path(__file__).parent / ".env")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import chat
+from routers import chat, upload
 
 app = FastAPI(title="JINION-FRAMEWORK API", version="0.1.0")
 
@@ -20,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(chat.router)
+app.include_router(upload.router)
 
 
 @app.get("/health")
